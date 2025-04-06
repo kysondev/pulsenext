@@ -1,6 +1,6 @@
 {
   "name": "phizy-stack",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A CLI tool for quickly creating full-stack Next.js projects with custom templates and prewritten modules.",
   "bin": {
     "phizy-stack": "./build/index.js"
@@ -33,7 +33,8 @@
   "license": "MIT",
   "type": "module",
   "files": [
-    "build"
+    "build",
+    "templates"
   ],
   "dependencies": {
     "chalk": "^5.3.0",
