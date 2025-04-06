@@ -1,0 +1,41 @@
+{
+  "name": "phizy-stack",
+  "version": "1.0.0",
+  "description": "A CLI tool for quickly creating full-stack Next.js projects with custom templates and prewritten modules.",
+  "bin": {
+    "phizy-stack": "./build/index.js"
+  },
+  "main": "./build/index.js",
+  "types": "./build/index.d.ts",
+  "scripts": {
+    "dev": "ts-node src/index.ts",
+    "build": "tsc",
+    "start": "node build/index.js",
+    "prepare": "npm run build",
+    "test": "vitest"
+  },
+  "keywords": [
+    "cli",
+    "typescript",
+    "phizy",
+    "stack",
+    "full-stack"
+  ],
+  "author": "phiztys",
+  "license": "MIT",
+  "type": "module",
+  "files": [
+    "build"
+  ],
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "commander": "^11.0.0",
+    "execa": "^7.2.0",
+    "ora": "^7.0.1"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.1",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.1"
+  }
+}

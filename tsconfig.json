@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "incremental": true,
+    "strict": true,
+    "rootDir": "src",
+    "outDir": "./build",
+    "allowJs": true,
+    "target": "es6",
+    "module": "NodeNext",
+    "lib": ["es2024"],
+    "sourceMap": true,
+    "skipLibCheck": true,
+    "noUnusedParameters": false,
+    "noUnusedLocals": false,
+    "noUncheckedIndexedAccess": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "allowUnreachableCode": false,
+    "noFallthroughCasesInSwitch": true,
+    "noErrorTruncation": true,
+    "declaration": true
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": []
+}
