@@ -7,6 +7,14 @@
   },
   "main": "./build/index.js",
   "types": "./build/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/phizyts/phizy-stack.git"
+  },
+  "bugs": {
+    "url": "https://github.com/phizyts/phizy-stack/issues"
+  },
+  "homepage": "https://github.com/phizyts/phizy-stack#readme",
   "scripts": {
     "dev": "ts-node src/index.ts",
     "build": "tsc",
