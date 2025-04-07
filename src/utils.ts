@@ -27,12 +27,15 @@ export const copyDir = async (src: string, dest: string) => {
 
 export const getAvailableModuleNames = async (): Promise<string[]> => {
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
-  const modulesDir = path.join(__dirname, "../templates/modules");
+  const modulesDir = path.join(__dirname, "commands/modules");
 
   try {
     const entries = await fs.readdir(modulesDir, { withFileTypes: true });
-    return entries.filter((e) => e.isDirectory()).map((e) => e.name);
-  } catch {
+    return entries
+      .filter((e) => e.isFile() && e.name.endsWith(".js"))
+      .map((e) => e.name.replace(/\.js$/, ""));
+  } catch (error) {
+    log.error(`Failed to read modules directory: ${(error as Error).message}`);
     return [];
   }
 };
