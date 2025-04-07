@@ -2,7 +2,7 @@ import ora from "ora";
 import { existsSync } from "fs";
 import path from "path";
 import chalk from "chalk";
-import { copyDir, log } from "../utils.js";
+import { copyDir, getVersion, log } from "../utils.js";
 import { promisify } from "util";
 import { exec } from "child_process";
 import { fileURLToPath } from "url";
@@ -22,6 +22,16 @@ export default async function create(projectName: string) {
     }
 
     await copyDir(baseTemplateDir, projectDir);
+
+    const phizyConfigPath = path.join(projectDir, '.phizy-stack.json');
+    const version = await getVersion();
+    const phizyConfig = {
+      projectName,
+      version: version,
+      createdAt: new Date().toISOString(),
+      modules: []
+    };
+    await fs.writeFile(phizyConfigPath, JSON.stringify(phizyConfig, null, 2));
 
     const packageJsonPath = path.join(projectDir, "package.json");
     const packageJson = JSON.parse(await fs.readFile(packageJsonPath, "utf8"));

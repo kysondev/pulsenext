@@ -39,3 +39,10 @@ export const getAvailableModuleNames = async (): Promise<string[]> => {
     return [];
   }
 };
+
+export const getVersion = async (): Promise<string> => {
+  const __dirname = path.dirname(fileURLToPath(import.meta.url));
+  const cliPackageJsonPath = path.join(__dirname, '../package.json');
+  const cliPackageJson = JSON.parse(await fs.readFile(cliPackageJsonPath, 'utf8'));
+  return cliPackageJson.version;
+};
