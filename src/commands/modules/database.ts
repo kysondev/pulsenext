@@ -2,7 +2,7 @@ import { exec } from "child_process";
 import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
-import { copyDir } from "../../utils.js";
+import { copyDir } from "../../utils/index.js";
 import chalk from "chalk";
 import { promisify } from "util";
 import { Ora } from "ora";

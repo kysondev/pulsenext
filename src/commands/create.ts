@@ -2,7 +2,7 @@ import ora from "ora";
 import { existsSync } from "fs";
 import path from "path";
 import chalk from "chalk";
-import { copyDir, getVersion, log } from "../utils.js";
+import { copyDir, getVersion, log } from "../utils/index.js";
 import { promisify } from "util";
 import { exec } from "child_process";
 import { fileURLToPath } from "url";

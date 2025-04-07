@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { getAvailableModuleNames, log } from "../utils.js";
+import { getAvailableModuleNames, log } from "../utils/index.js";
 
 export default async function modules() {
   try {

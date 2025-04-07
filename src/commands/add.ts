@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import ora from "ora";
 import path from "path";
-import { log, getAvailableModuleNames } from "../utils.js";
+import { log, getAvailableModuleNames } from "../utils/index.js";
 import { fileURLToPath, pathToFileURL } from "url";
 import { existsSync } from "fs";
 import fs from "fs/promises";
@@ -11,21 +11,28 @@ export default async function add(moduleName: string): Promise<void> {
   const spinner = ora(`Adding module: ${moduleName}...`).start();
 
   try {
-
     const currentDir = process.cwd();
-    const phizyConfigPath = path.join(currentDir, '.phizy-stack.json');
-    
+    const phizyConfigPath = path.join(currentDir, ".phizy-stack.json");
+
     if (!existsSync(phizyConfigPath)) {
-      spinner.fail('Not in a valid phizy-stack project directory');
-      log.error('This command must be run from within a project created by phizy-stack');
-      log.info(`To create a new project, run: ${chalk.bold('phizy-stack create <project-name>')}`);
+      spinner.fail("Not in a valid phizy-stack project directory");
+      log.error(
+        "This command must be run from within a project created by phizy-stack"
+      );
+      log.info(
+        `To create a new project, run: ${chalk.bold(
+          "phizy-stack create <project-name>"
+        )}`
+      );
       process.exit(1);
     }
 
-    const phizyConfig = JSON.parse(await fs.readFile(phizyConfigPath, 'utf8'));
-    
+    const phizyConfig = JSON.parse(await fs.readFile(phizyConfigPath, "utf8"));
+
     if (phizyConfig.modules.includes(moduleName)) {
-      spinner.fail(`Module "${moduleName}" is already installed in this project`);
+      spinner.fail(
+        `Module "${moduleName}" is already installed in this project`
+      );
       process.exit(1);
     }
 
@@ -52,7 +59,10 @@ export default async function add(moduleName: string): Promise<void> {
       if (typeof moduleFunction === "function") {
         await moduleFunction(spinner);
         phizyConfig.modules.push(moduleName);
-        await fs.writeFile(phizyConfigPath, JSON.stringify(phizyConfig, null, 2));
+        await fs.writeFile(
+          phizyConfigPath,
+          JSON.stringify(phizyConfig, null, 2)
+        );
         spinner.succeed(`Module ${chalk.bold(moduleName)} added successfully.`);
       } else {
         spinner.fail(`Module "${moduleName}" does not export a function.`);
