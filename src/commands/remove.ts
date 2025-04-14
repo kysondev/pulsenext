@@ -1,15 +1,9 @@
-import { existsSync } from "fs";
 import ora from "ora";
-import path from "path";
-import { fileURLToPath } from "url";
 import {
   getAvailableModuleNames,
   initializeModules,
   log,
 } from "../utils/index.js";
-import chalk from "chalk";
-import fs from "fs/promises";
-import readline from "readline";
 import createModuleManager from "../modules/createModuleManager.js";
 
 export default async function remove(moduleName: string): Promise<void> {

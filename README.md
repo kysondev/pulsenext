@@ -98,6 +98,6 @@ Phizy-Stack is open-source and available under the [MIT License](LICENSE).
 ## Roadmap
 
 - [x] Add database modules
-- [ ] Add phizy-stack remove module command
+- [x] Add phizy-stack remove module command
 - [ ] Add auth modules
 - More coming soon!

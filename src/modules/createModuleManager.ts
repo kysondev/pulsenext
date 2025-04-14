@@ -61,6 +61,10 @@ const createModuleManager = async () => {
       try {
         await module.initialize(spinner);
         phizyConfig.modules.push(moduleName);
+        await asyncFs.writeFile(
+          phizyConfigPath,
+          JSON.stringify(phizyConfig, null, 2)
+        );
         spinner.succeed(
           `Module "${chalk.bold(moduleName)}" added successfully.`
         );
@@ -114,6 +118,10 @@ const createModuleManager = async () => {
         await module.remove(spinner);
         phizyConfig.modules = phizyConfig.modules.filter(
           (module: string) => module !== moduleName
+        );
+        await asyncFs.writeFile(
+          phizyConfigPath,
+          JSON.stringify(phizyConfig, null, 2)
         );
         spinner.succeed(
           `Module ${chalk.bold(moduleName)} removed successfully.`
