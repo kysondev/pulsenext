@@ -3,6 +3,7 @@ import { Command } from "commander";
 import modules from "./commands/modules.js";
 import add from "./commands/add.js";
 import create from "./commands/create.js";
+import remove from "./commands/remove.js";
 
 const program = new Command();
 
@@ -22,6 +23,12 @@ program
   .argument("<module-name>", "Name of the module to add")
   .description("Add a module to the current project from templates/modules")
   .action(add);
+
+program
+  .command("remove")
+  .argument("<module-name>", "Name of the module to remove")
+  .description("Remove a module from the current project")
+  .action(remove);
 
 program
   .command("modules")

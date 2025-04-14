@@ -1,13 +1,19 @@
+import { existsSync } from "fs";
 import ora from "ora";
+import path from "path";
+import { fileURLToPath } from "url";
 import {
   getAvailableModuleNames,
   initializeModules,
   log,
 } from "../utils/index.js";
+import chalk from "chalk";
+import fs from "fs/promises";
+import readline from "readline";
 import createModuleManager from "../modules/createModuleManager.js";
 
-export default async function add(moduleName: string): Promise<void> {
-  const spinner = ora(`Adding module: ${moduleName}...`).start();
+export default async function remove(moduleName: string): Promise<void> {
+  const spinner = ora(`Removing module: ${moduleName}...`).start();
 
   try {
     const availableModules = await getAvailableModuleNames();
@@ -17,7 +23,7 @@ export default async function add(moduleName: string): Promise<void> {
     if (moduleFound) {
       const moduleManager = await createModuleManager();
       await initializeModules(moduleManager);
-      await moduleManager.add(moduleName, spinner);
+      await moduleManager.remove(moduleName, spinner);
     } else {
       spinner.fail(`Module "${moduleName}" is not supported.`);
     }
