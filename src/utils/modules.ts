@@ -1,15 +1,21 @@
 import path from "path";
 import { fileURLToPath, pathToFileURL } from "url";
 import { log } from "./logger.js";
-import fs from "fs/promises";
+import asyncFs from "fs/promises";
+import fs from "fs";
 import IModuleManager from "../interface/IModuleManager.js";
+import { Ora } from "ora";
+import { promisify } from "util";
+import { exec } from "child_process";
+import readline from "readline";
+import chalk from "chalk";
 
 export const getAvailableModuleNames = async (): Promise<string[]> => {
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
   const modulesDir = path.join(__dirname, "../modules/available-modules");
 
   try {
-    const entries = await fs.readdir(modulesDir, { withFileTypes: true });
+    const entries = await asyncFs.readdir(modulesDir, { withFileTypes: true });
     const moduleNames: string[] = [];
 
     for (const entry of entries) {
@@ -30,8 +36,108 @@ export const getAvailableModuleNames = async (): Promise<string[]> => {
   }
 };
 
-export async function initializeModules(moduleManager: IModuleManager) {
+export const initializeModules = async (
+  moduleManager: IModuleManager
+): Promise<void> => {
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
   const modulesDirectory = path.join(__dirname, "../modules/available-modules");
   await moduleManager.initializeModules(modulesDirectory);
-}
+};
+
+export const runCommand = async (
+  spinner: Ora,
+  command: string,
+  text?: string
+): Promise<void> => {
+  const execAsync = promisify(exec);
+  try {
+    if (text) {
+      spinner.isSpinning ? (spinner.text = text) : spinner.start(text);
+    }
+    await execAsync(command);
+  } catch (err) {
+    log.error((err as Error).message);
+    process.exit(1);
+  }
+};
+
+export const askUser = (question: string): Promise<boolean> => {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+  return new Promise((resolve) => {
+    rl.question(question, (answer) => {
+      rl.close();
+      resolve(answer.trim().toLowerCase() === "y");
+    });
+  });
+};
+
+export const cleanupModuleResources = async ({
+  spinner,
+  packages,
+  filesToDelete,
+  envFilePath,
+  envKeyToRemove,
+}: {
+  spinner: Ora;
+  packages: string[];
+  filesToDelete: string[];
+  envFilePath?: string;
+  envKeyToRemove?: string;
+}) => {
+  spinner.stop();
+
+  log.info(chalk.bold("The following will be removed:"));
+  log.info(`- Packages: ${packages.join(", ")}`);
+  filesToDelete.forEach((item) => log.info(`- ${item}`));
+  if (envKeyToRemove) log.info(`- Remove ${envKeyToRemove} from .env`);
+
+  const confirmed = await askUser("Continue with removal? (y/N): ");
+  if (!confirmed) {
+    log.info("Removal cancelled.");
+    process.exit(0);
+  }
+  await runCommand(
+    spinner,
+    `npm uninstall ${packages.join(" ")}`,
+    "Uninstalling packages..."
+  );
+
+  const potentialEmptyDirs = new Set<string>();
+
+  filesToDelete.forEach((item) => {
+    fs.rmSync(item, { recursive: true, force: true });
+
+    const parentDir = path.dirname(item);
+    if (parentDir !== "." && fs.existsSync(parentDir)) {
+      potentialEmptyDirs.add(parentDir);
+    }
+  });
+
+  for (const dir of potentialEmptyDirs) {
+    try {
+      const dirContents = fs.readdirSync(dir);
+      if (dirContents.length === 0) {
+        spinner.stop();
+        const confirmDirRemoval = await askUser(
+          `Directory "${chalk.bold(dir)}" is now empty. Remove it? (y/N): `
+        );
+        if (confirmDirRemoval) {
+          fs.rmdirSync(dir);
+        }
+      }
+    } catch (error) {
+      log.error(`Error checking directory ${dir}: ${error}`);
+    }
+  }
+
+  if (envFilePath && envKeyToRemove && fs.existsSync(envFilePath)) {
+    const lines = fs
+      .readFileSync(envFilePath, "utf-8")
+      .split("\n")
+      .filter((line) => !line.startsWith(`${envKeyToRemove}=`));
+    fs.writeFileSync(envFilePath, lines.join("\n") + "\n");
+  }
+};
