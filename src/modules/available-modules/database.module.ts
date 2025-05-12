@@ -1,3 +1,4 @@
+// Imports required modules for file handling, CLI interactions, and utilities
 import { exec } from "child_process";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -9,8 +10,11 @@ import { Ora } from "ora";
 import IModule from "../../interface/IModule.js";
 import readline from "readline";
 
+// Defines the "database" module with initialize and remove functions
 const DatabaseModule: IModule = {
   name: "database",
+
+  // Sets up Prisma in the project (installation, initialization, template copying)
   initialize: async (spinner: Ora): Promise<void> => {
     const execAsync = promisify(exec);
     try {
@@ -22,10 +26,7 @@ const DatabaseModule: IModule = {
 
       spinner.text = "Copying database templates...";
       const __dirname = path.dirname(fileURLToPath(import.meta.url));
-      const templateDir = path.join(
-        __dirname,
-        "../../../templates/modules/database"
-      );
+      const templateDir = path.join(__dirname, "../../../templates/modules/database");
       const targetDir = process.cwd();
 
       if (!fs.existsSync(templateDir)) {
@@ -34,23 +35,11 @@ const DatabaseModule: IModule = {
 
       await copyDir(templateDir, targetDir);
 
+      // Outputs next steps for user to finalize Prisma setup
       console.log(chalk.cyan("\nNext steps:\n"));
-      console.log(
-        chalk.cyan(
-          "1. Open your `.env` file and set the `DATABASE_URL` to your PostgreSQL connection string. For example:\n"
-        )
-      );
-      console.log(
-        chalk.bold(
-          '   DATABASE_URL="postgresql://user:password@localhost:5432/mydb"\n'
-        )
-      );
-
-      console.log(
-        chalk.cyan(
-          "2. After setting the DATABASE_URL, run the following commands:\n"
-        )
-      );
+      console.log(chalk.cyan("1. Set your DATABASE_URL in the `.env` file."));
+      console.log(chalk.bold('   DATABASE_URL="postgresql://user:password@localhost:5432/mydb"\n'));
+      console.log(chalk.cyan("2. Run the Prisma migration and generate commands:\n"));
       console.log(chalk.bold("   npx prisma migrate dev --name init"));
       console.log(chalk.bold("   npx prisma generate\n"));
     } catch (error) {
@@ -58,6 +47,8 @@ const DatabaseModule: IModule = {
       throw error;
     }
   },
+
+  // Removes Prisma setup from the project
   remove: async (spinner: Ora): Promise<void> => {
     const execAsync = promisify(exec);
     const targetDir = process.cwd();
@@ -67,6 +58,7 @@ const DatabaseModule: IModule = {
     const envFilePath = path.join(process.cwd(), ".env");
     const pendingDeletes = [];
 
+    // Identify files and directories to remove
     if (fs.existsSync(libDir)) {
       const files = fs.readdirSync(libDir);
       if (files.length === 1 && files[0] === "prisma.ts") {
@@ -80,6 +72,7 @@ const DatabaseModule: IModule = {
       pendingDeletes.push(prismaDir);
     }
 
+    // Determine if .env file contains only DATABASE_URL or needs line removal
     let envModification = null;
     if (fs.existsSync(envFilePath)) {
       const envFileContent = fs.readFileSync(envFilePath, "utf-8");
@@ -95,6 +88,7 @@ const DatabaseModule: IModule = {
 
     spinner.stop();
 
+    // Display summary of items to remove and ask for user confirmation
     log.info(chalk.bold("The following will be removed:"));
     log.info("- Packages: prisma, @prisma/client");
     pendingDeletes.forEach((item) => log.info(`- ${item}`));
@@ -118,6 +112,7 @@ const DatabaseModule: IModule = {
         process.exit(0);
       }
 
+      // Perform removal of packages and files
       spinner.start("Removing Prisma packages...");
       await execAsync("npm uninstall prisma @prisma/client");
 
@@ -125,6 +120,7 @@ const DatabaseModule: IModule = {
         fs.rmSync(item, { recursive: true });
       });
 
+      // Clean DATABASE_URL from .env if needed
       if (envModification && fs.existsSync(envFilePath)) {
         const envFileContent = fs.readFileSync(envFilePath, "utf-8");
         const updatedLines = envFileContent
@@ -139,4 +135,5 @@ const DatabaseModule: IModule = {
   },
 };
 
+// Export the module for use in the system
 export default DatabaseModule;
