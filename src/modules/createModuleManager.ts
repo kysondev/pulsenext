@@ -2,7 +2,7 @@ import { Ora } from "ora";
 import fs, { existsSync } from "fs";
 import asyncFs from "fs/promises";
 import path from "path";
-import { getAvailableModuleNames, log } from "../utils/index.js";
+import { askUser, getAvailableModuleNames, log } from "../utils/index.js";
 import chalk from "chalk";
 import { pathToFileURL } from "url";
 import IModule from "../interface/IModule.js";
@@ -59,6 +59,62 @@ const createModuleManager = async () => {
       }
 
       try {
+        if (module.dependencies && module.dependencies.length > 0) {
+          spinner.stop();
+
+          const newDependencies = module.dependencies.filter(
+            (dependency) => !phizyConfig.modules.includes(dependency)
+          );
+
+          if (newDependencies.length > 0) {
+            console.log(
+              chalk.yellow("\nThe following dependencies will be installed:")
+            );
+            newDependencies.forEach((dependency) => {
+              console.log(chalk.cyan(`- ${dependency}`));
+            });
+
+            const confirmInstall = await askUser(
+              "Do you want to proceed with installation? (y/N): "
+            );
+
+            spinner.start();
+
+            if (!confirmInstall) {
+              spinner.fail(
+                `Installation of "${chalk.bold(moduleName)}" cancelled by user.`
+              );
+              process.exit(0);
+            }
+
+            for (const dependency of newDependencies) {
+              const dependencyModule = modules[dependency];
+              if (dependencyModule) {
+                try {
+                  await dependencyModule.initialize(spinner);
+                  phizyConfig.modules.push(dependency);
+                  await asyncFs.writeFile(
+                    phizyConfigPath,
+                    JSON.stringify(phizyConfig, null, 2)
+                  );
+                  spinner.succeed(
+                    `Dependency "${chalk.bold(dependency)}" added successfully.`
+                  );
+                } catch (err) {
+                  spinner.fail(`Failed to add dependency "${dependency}".`);
+                  log.error((err as Error).message);
+                  process.exit(1);
+                }
+              } else {
+                spinner.fail(
+                  `Dependency "${chalk.bold(dependency)}" not found.`
+                );
+                process.exit(1);
+              }
+            }
+          }
+        }
+
         await module.initialize(spinner);
         phizyConfig.modules.push(moduleName);
         await asyncFs.writeFile(
@@ -86,7 +142,11 @@ const createModuleManager = async () => {
     }
   };
 
-  const remove = async (moduleName: string, spinner: Ora): Promise<void> => {
+  const remove = async (
+    moduleName: string,
+    spinner: Ora,
+    isDependency: boolean = false
+  ): Promise<void> => {
     const module = modules[moduleName];
     if (module) {
       const currentDir = process.cwd();
@@ -115,6 +175,94 @@ const createModuleManager = async () => {
       }
 
       try {
+        const dependentModules = phizyConfig.modules.filter(
+          (installedModule: string) => {
+            if (installedModule === moduleName) return false;
+            const installedModuleConfig = modules[installedModule];
+            return installedModuleConfig?.dependencies?.includes(moduleName);
+          }
+        );
+
+        if (dependentModules.length > 0 && !isDependency) {
+          spinner.stop();
+          console.log(
+            chalk.yellow("\nThe following modules depend on this module:")
+          );
+          dependentModules.forEach((dep: string) => {
+            console.log(chalk.cyan(`- ${dep}`));
+          });
+
+          const modulesToRemove: string[] = [];
+          for (const depModule of dependentModules) {
+            const confirmRemoveDep = await askUser(
+              `Do you want to remove "${chalk.bold(
+                depModule
+              )}" as well? (y/N): `
+            );
+            if (confirmRemoveDep) {
+              modulesToRemove.push(depModule);
+            }
+          }
+
+          spinner.start();
+
+          for (const depModule of modulesToRemove) {
+            await remove(depModule, spinner, true);
+            phizyConfig.modules = phizyConfig.modules.filter(
+              (module: string) => module !== depModule
+            );
+            await asyncFs.writeFile(
+              phizyConfigPath,
+              JSON.stringify(phizyConfig, null, 2)
+            );
+          }
+        }
+
+        if (
+          module.dependencies &&
+          module.dependencies.length > 0 &&
+          !isDependency
+        ) {
+          const installedDependencies = module.dependencies.filter((dep) =>
+            phizyConfig.modules.includes(dep)
+          );
+
+          if (installedDependencies.length > 0) {
+            spinner.stop();
+            console.log(
+              chalk.yellow(
+                "\nThis module has the following dependencies installed:"
+              )
+            );
+            installedDependencies.forEach((dep: string) => {
+              console.log(chalk.cyan(`- ${dep}`));
+            });
+
+            const depsToRemove: string[] = [];
+            for (const dep of installedDependencies) {
+              const confirmRemoveDep = await askUser(
+                `Do you want to remove "${chalk.bold(dep)}" as well? (y/N): `
+              );
+              if (confirmRemoveDep) {
+                depsToRemove.push(dep);
+              }
+            }
+
+            spinner.start();
+
+            for (const dep of depsToRemove) {
+              await remove(dep, spinner, true);
+              phizyConfig.modules = phizyConfig.modules.filter(
+                (module: string) => module !== dep
+              );
+              await asyncFs.writeFile(
+                phizyConfigPath,
+                JSON.stringify(phizyConfig, null, 2)
+              );
+            }
+          }
+        }
+
         await module.remove(spinner);
         phizyConfig.modules = phizyConfig.modules.filter(
           (module: string) => module !== moduleName
@@ -128,6 +276,8 @@ const createModuleManager = async () => {
         );
       } catch (err) {
         spinner.fail(`Failed to remove module "${chalk.bold(moduleName)}".`);
+        log.error((err as Error).message);
+        process.exit(1);
       }
     } else {
       throw new Error(`Module "${chalk.bold(moduleName)}" not found.`);

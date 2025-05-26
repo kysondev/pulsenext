@@ -107,6 +107,27 @@ export const cleanupModuleResources = async ({
 
   const potentialEmptyDirs = new Set<string>();
 
+  const checkAndRemoveEmptyParentDir = async (dir: string) => {
+    if (dir === "." || dir === "public") return;
+    
+    try {
+      const dirContents = fs.readdirSync(dir);
+      if (dirContents.length === 0) {
+        spinner.stop();
+        const confirmDirRemoval = await askUser(
+          `Directory "${chalk.bold(dir)}" is now empty. Remove it? (y/N): `
+        );
+        if (confirmDirRemoval) {
+          fs.rmdirSync(dir);
+          const parentDir = path.dirname(dir);
+          await checkAndRemoveEmptyParentDir(parentDir);
+        }
+      }
+    } catch (error) {
+      log.error(`Error checking directory ${dir}: ${error}`);
+    }
+  };
+
   filesToDelete.forEach((item) => {
     fs.rmSync(item, { recursive: true, force: true });
 
@@ -117,27 +138,46 @@ export const cleanupModuleResources = async ({
   });
 
   for (const dir of potentialEmptyDirs) {
-    try {
-      const dirContents = fs.readdirSync(dir);
-      if (dirContents.length === 0) {
-        spinner.stop();
-        const confirmDirRemoval = await askUser(
-          `Directory "${chalk.bold(dir)}" is now empty. Remove it? (y/N): `
-        );
-        if (confirmDirRemoval) {
-          fs.rmdirSync(dir);
-        }
-      }
-    } catch (error) {
-      log.error(`Error checking directory ${dir}: ${error}`);
-    }
+    await checkAndRemoveEmptyParentDir(dir);
   }
 
   if (envFilePath && envKeyToRemove && fs.existsSync(envFilePath)) {
+    const keysToRemove = envKeyToRemove.split(",");
     const lines = fs
       .readFileSync(envFilePath, "utf-8")
       .split("\n")
-      .filter((line) => !line.startsWith(`${envKeyToRemove}=`));
+      .filter((line) => {
+        if (!line.trim() || line.trim().startsWith("#")) return true;
+        return !keysToRemove.some(key => line.trim().startsWith(`${key}=`));
+      });
     fs.writeFileSync(envFilePath, lines.join("\n") + "\n");
+  }
+};
+
+export const installDependencies = async (
+  spinner: Ora,
+  dependencies: string[]
+): Promise<void> => {
+  try {
+    spinner.stop();
+    log.info(
+      "This module has dependencies, would you like to install them now?"
+    );
+    for (const dependency of dependencies) {
+      log.info(`- ${dependency}`);
+    }
+    const confirmed = await askUser("Install dependencies? (y/N): ");
+    if (confirmed) {
+      for (const dependency of dependencies) {
+        await runCommand(
+          spinner,
+          `phizy-stack add ${dependency}`,
+          "Installing dependencies..."
+        );
+      }
+    }
+  } catch (error) {
+    log.error(`Failed to install dependencies: ${(error as Error).message}`);
+    process.exit(0);
   }
 };
