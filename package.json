@@ -1,6 +1,6 @@
 {
   "name": "phizy-stack",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A CLI tool for quickly creating full-stack Next.js projects with custom templates and prewritten modules.",
   "bin": {
     "phizy-stack": "./build/index.js"
