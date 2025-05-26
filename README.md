@@ -75,7 +75,7 @@ Replace `<module-name>` with the name of the module you wish to add to your proj
 Here’s a non-exhaustive list of the modules you can add to your projects:
 
 - **PostgreSQL + Prisma** (`database`)
-- **Authentication** (`auth`) _Coming soon_
+- **Authentication** (`auth`)
 - **Payment System** (`stripe`) _Coming soon_
 - More Coming Soon...
 
@@ -99,5 +99,7 @@ Phizy-Stack is open-source and available under the [MIT License](LICENSE).
 
 - [x] Add database modules
 - [x] Add phizy-stack remove module command
-- [ ] Add auth modules
+- [x] Add auth modules
+- [ ] Add turborepo & docs page
+- [ ] Add payment modules
 - More coming soon!
