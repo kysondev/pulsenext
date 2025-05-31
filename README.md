@@ -1,105 +1,84 @@
-# Phizy-Stack CLI
+# Turborepo starter
 
-Phizy-Stack is a command-line interface (CLI) tool designed to simplify the process of setting up full-stack Next.js projects with custom templates and prewritten modules. It allows you to quickly bootstrap new projects and integrate essential, pre-configured features like authentication, payment systems, databases, and many other modules, all ready to use.  
-This tool was originally created for personal use, but I'm sharing it here for others who may find it useful.
+This Turborepo starter is maintained by the Turborepo core team.
 
----
+## Using this example
 
-## Features
+Run the following command:
 
-- **Create a new Next.js project**: Generate a new project using `phizy-stack` custom template in seconds.
-- **Add prewritten modules**: Easily integrate a wide range of pre-configured modules to your project, such as authentication, payment systems, databases (PostgreSQL + Prisma), API integrations, and more.
-
----
-
-## Installation
-
-To get started with `phizy-stack`, you need to have **Node.js** installed on your machine. You can install it from [here](https://nodejs.org/).
-
-### Install Phizy-Stack CLI globally
-
-To install `phizy-stack` globally on your system, run:
-
-```
-npm install -g phizy-stack
+```sh
+npx create-turbo@latest
 ```
 
----
+## What's inside?
 
-## Usage
+This Turborepo includes the following packages/apps:
 
-### 1. Create a New Project
+### Apps and Packages
 
-To create a new full-stack Next.js project with `phizy-stack`, run:
+- `docs`: a [Next.js](https://nextjs.org/) app
+- `web`: another [Next.js](https://nextjs.org/) app
+- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
+- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
+- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+
+Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+
+### Utilities
+
+This Turborepo has some additional tools already setup for you:
+
+- [TypeScript](https://www.typescriptlang.org/) for static type checking
+- [ESLint](https://eslint.org/) for code linting
+- [Prettier](https://prettier.io) for code formatting
+
+### Build
+
+To build all apps and packages, run the following command:
 
 ```
-phizy-stack create <project-name>
+cd my-turborepo
+pnpm build
 ```
 
-This will generate a new Next.js project using a predefined template. Replace `<project-name>` with the name you want for your new project.
+### Develop
 
-### 2. Add Prewritten Modules
-
-Once your project is created, you can add pre-configured modules to it by using the following syntax:
+To develop all apps and packages, run the following command:
 
 ```
-phizy-stack add <module-name>
+cd my-turborepo
+pnpm dev
 ```
 
-Replace `<module-name>` with the name of the module you wish to add to your project. Some examples of modules include `auth`, `stripe`, `database`, etc. You can add as many modules as you need for your project.
+### Remote Caching
 
----
+> [!TIP]
+> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
 
-## Example Workflow
+Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
 
-1. Create a new project using `phizy-stack`:
+By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
 
-   ```
-   phizy-stack create my-nextjs-app
-   ```
+```
+cd my-turborepo
+npx turbo login
+```
 
-2. Navigate to your project directory:
+This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
 
-   ```
-   cd my-nextjs-app
-   ```
+Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
 
-3. Add authentication:
+```
+npx turbo link
+```
 
-   ```
-   phizy-stack add auth
-   ```
+## Useful Links
 
-## Available Modules
+Learn more about the power of Turborepo:
 
-Here’s a non-exhaustive list of the modules you can add to your projects:
-
-- **PostgreSQL + Prisma** (`database`)
-- **Authentication** (`auth`)
-- **Payment System** (`stripe`) _Coming soon_
-- More Coming Soon...
-
-If you're missing a specific module, feel free to add it and contribute!
-
----
-
-## Contributing
-
-This project was originally created for personal use, but feel free to fork the repository, contribute, or modify it for your own needs. Pull requests for new modules, bug fixes, and improvements are always welcome!
-
----
-
-## License
-
-Phizy-Stack is open-source and available under the [MIT License](LICENSE).
-
----
-
-## Roadmap
-
-- [x] Add database modules
-- [x] Add phizy-stack remove module command
-- [x] Add auth modules
-- [ ] Add turborepo & docs page
-- [ ] Add payment modules
-- More coming soon!
+- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
+- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
+- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
+- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
+- [Configuration Options](https://turborepo.com/docs/reference/configuration)
+- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
