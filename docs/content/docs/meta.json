@@ -1,0 +1,6 @@
+{
+  "title": "Phizy Stack",
+  "description": "Phizy Stack",
+  "root": true,
+  "pages": ["---Get Started---", "index", "quick-start", "modules"]
+}

@@ -1,0 +1,60 @@
+---
+title: Quick Start
+icon: Album
+---
+
+Get up and running with Phizy-Stack in just a few commands.
+
+## 1. Install the CLI
+
+Make sure **Node.js** is installed on your system.
+
+To install Phizy-Stack globally:
+
+```bash
+npm install -g phizy-stack
+```
+
+## 2. Create a New Project
+
+Generate a new full-stack Next.js project using the CLI:
+
+```bash
+phizy-stack create my-app
+```
+
+This will scaffold a project with Next.js, TypeScript, Tailwind, and more.
+
+## 3. Add a Module
+
+Navigate into your project folder and add your first module:
+
+```bash
+cd my-app
+phizy-stack add auth
+```
+
+Modules are fully pre-configured and production-ready. Examples include:
+
+- `auth` – Authentication with better-auth
+- `database` – PostgreSQL + Prisma setup
+- `payment` – Payments system with stripe (coming soon)
+
+## 4. Start Building
+
+After adding modules, open the project in your editor and start building:
+
+```bash
+npm install
+npm run dev
+```
+
+Your app is now running locally on `http://localhost:3000`.
+
+## Next Steps
+
+<Cards>
+  <Card title="Explore Modules" href="/docs/modules" />
+  <Card title="CLI Commands" href="/docs/cli" />
+  <Card title="Project Structure" href="/docs/structure" />
+</Cards>

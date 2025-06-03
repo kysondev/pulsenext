@@ -1,0 +1,67 @@
+---
+title: Modules
+icon: Package
+---
+
+Modules in Phizy-Stack are plug-and-play features you can add to any project with a single command. Each module is prebuilt, fully integrated, and follows best practices—so you can move fast without wiring things up manually.
+
+## How It Works
+
+To add a module to your project:
+
+```bash
+phizy-stack add <module-name>
+```
+
+Example:
+
+```bash
+phizy-stack add auth
+```
+
+Each module installs the required code, config, dependencies, and environment variables.
+
+## Available Modules
+
+### `auth`
+
+Adds a complete authentication system using [better-auth](https://www.better-auth.com/), integrated with Prisma and Next.js.
+
+→ [Read more](/docs/modules/auth)
+
+---
+
+### `database`
+
+Sets up **PostgreSQL** with **Prisma**, including schema files, migration scripts, and type-safe database access.
+
+→ [Read more](/docs/modules/database)
+
+---
+
+### `stripe` _(coming soon)_
+
+Payment integration using **Stripe** with prebuilt backend and UI components.
+
+→ Docs coming soon
+
+---
+
+## Coming Soon
+
+- `resend` – Email sending setup
+- `upload` – File and image uploads
+- `dashboard` – Admin dashboard starter
+- `turborepo` – Monorepo setup with shared packages
+
+## Need Something Else?
+
+Feel free to contribute a new module or suggest one in the GitHub repo.
+
+<Cards>
+  <Card
+    title="Contribute a Module"
+    href="https://github.com/your-org/phizy-stack"
+  />
+  <Card title="CLI Reference" href="/cli" />
+</Cards>

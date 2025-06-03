@@ -1,0 +1,63 @@
+---
+title: Authentication
+icon: Key
+---
+
+The **auth** module adds a full authentication system to your project using [better-auth](https://www.better-auth.com/). It includes everything you need to get started with sign in, sign out, and session management.
+
+This module is fully integrated with Prisma and Next.js App Router.
+
+## Installation
+
+Add the auth module with the CLI:
+
+```bash
+phizy-stack add auth
+```
+
+Then regenerate your Prisma schema:
+
+```bash
+npx prisma generate
+```
+
+This will:
+
+- Set up **better-auth** with prebuilt configuration
+- Add Prisma models for users and accounts
+- Create auth routes under `/auth`
+- Add reusable hooks and session context
+- Configure environment variables
+
+## What's Included
+
+- **Authentication Routes**  
+  Predefined routes for sign in, sign out, and callbacks
+
+- **OAuth Support**  
+  Supports OAuth providers (e.g. GitHub, Google) with a simple config
+
+- **Prisma Integration**  
+  Adds `User` and `Account` models with migrations ready to run
+
+## Configuration
+
+Update your `.env` file with the required environment variables:
+
+```
+APP_NAME=MyApp
+AUTH_SECRET=your-secret
+GITHUB_CLIENT_ID=your-github-client-id
+GITHUB_CLIENT_SECRET=your-github-client-secret
+GOOGLE_CLIENT_ID=your-github-client-id
+GOOGLE_CLIENT_SECRET=your-github-client-secret
+RESEND_API_KEY=your-resend-api-key
+TWO_FA_EMAIL=your-2fa-email
+VERIFICATION_EMAIL=your-verification-email
+RESET_PASSWORD_EMAIL=your-password-reset-email
+DATABASE_URL=postgres://...
+```
+
+> You can also configure other providers like Google or Discord.
+
+## Usage
