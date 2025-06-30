@@ -30,6 +30,7 @@ const createModuleManager = async () => {
 
   const add = async (moduleName: string, spinner: Ora): Promise<void> => {
     const module = modules[moduleName];
+    const finalStepsMessages: string[] = [];
     if (module) {
       const currentDir = process.cwd();
       const phizyConfigPath = path.join(currentDir, ".phizy-stack.json");
@@ -91,7 +92,8 @@ const createModuleManager = async () => {
               const dependencyModule = modules[dependency];
               if (dependencyModule) {
                 try {
-                  await dependencyModule.initialize(spinner);
+                  const depFinalSteps = await dependencyModule.initialize(spinner);
+                  if (depFinalSteps) finalStepsMessages.push(depFinalSteps);
                   phizyConfig.modules.push(dependency);
                   await asyncFs.writeFile(
                     phizyConfigPath,
@@ -115,7 +117,8 @@ const createModuleManager = async () => {
           }
         }
 
-        await module.initialize(spinner);
+        const mainFinalSteps = await module.initialize(spinner);
+        if (mainFinalSteps) finalStepsMessages.push(mainFinalSteps);
         phizyConfig.modules.push(moduleName);
         await asyncFs.writeFile(
           phizyConfigPath,
@@ -124,6 +127,23 @@ const createModuleManager = async () => {
         spinner.succeed(
           `Module "${chalk.bold(moduleName)}" added successfully.`
         );
+        if (finalStepsMessages.length > 0) {
+          console.log("\n====================\nNext steps:\n====================\n");
+          const moduleOrder = [];
+          if (module.dependencies && module.dependencies.length > 0) {
+            module.dependencies.forEach(dep => {
+              if (phizyConfig.modules.includes(dep)) moduleOrder.push(dep);
+            });
+          }
+          moduleOrder.push(moduleName);
+          moduleOrder.forEach((mod, idx) => {
+            const msg = finalStepsMessages[idx];
+            if (msg) {
+              console.log(`[${mod}]`);
+              console.log(msg + "\n");
+            }
+          });
+        }
       } catch (err) {
         spinner.fail(`Failed to add module "${moduleName}".`);
         log.error((err as Error).message);

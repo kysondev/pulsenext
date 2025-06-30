@@ -3,10 +3,10 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { admin, twoFactor } from "better-auth/plugins";
 import { PrismaClient } from "../generated/prisma-client";
-import { resend } from "./resend";
-import TwoFactorVerificationEmail from "../components/ui/emails/TwoFactorVerificationEmail";
-import EmailVerification from "../components/ui/emails/EmailVerification";
-import ResetPassword from "components/ui/emails/ResetPassword";
+import TwoFactorVerificationEmail from "templates/emails/TwoFactorVerificationEmail";
+import EmailVerification from "templates/emails/EmailVerification";
+import ResetPassword from "templates/emails/ResetPassword";
+import { sendEmail } from "./email";
 
 const prisma = new PrismaClient();
 export const auth = betterAuth({
@@ -22,11 +22,11 @@ export const auth = betterAuth({
     twoFactor({
       otpOptions: {
         async sendOTP({ user, otp }) {
-          await resend.emails.send({
-            from: `${process.env.APP_NAME} <${process.env.TWO_FA_EMAIL}>`,
+          await sendEmail({
             to: user.email,
+            senderEmail: process.env.TWO_FA_EMAIL,
             subject: "Two-Factor Authentication (2FA)",
-            react: TwoFactorVerificationEmail({ otp }),
+            html: TwoFactorVerificationEmail({ otp }),
           });
         },
       },
@@ -37,11 +37,11 @@ export const auth = betterAuth({
   ],
   emailVerification: {
     sendVerificationEmail: async ({ user, url }) => {
-      await resend.emails.send({
-        from: `${process.env.APP_NAME} <${process.env.VERIFICATION_EMAIL}>`,
+      await sendEmail({
         to: user.email,
-        subject: "Verify your email address",
-        react: EmailVerification({ url }),
+        senderEmail: process.env.VERIFICATION_EMAIL,
+        subject: "Email Verification",
+        html: EmailVerification({ url }),
       });
     },
     sendOnSignUp: true,
@@ -69,11 +69,11 @@ export const auth = betterAuth({
       },
     },
     sendResetPassword: async ({ user, url }) => {
-      await resend.emails.send({
-        from: `${process.env.APP_NAME} <${process.env.RESET_PASSWORD_EMAIL}>`,
+      await sendEmail({
         to: user.email,
+        senderEmail: process.env.RESET_PASSWORD_EMAIL,
         subject: "Reset your password",
-        react: ResetPassword({ url }),
+        html: ResetPassword({ url }),
       });
     },
   },

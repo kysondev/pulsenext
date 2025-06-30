@@ -14,7 +14,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const DatabaseModule: IModule = {
   name: "database",
-  initialize: async (spinner: Ora): Promise<void> => {
+  initialize: async (spinner: Ora): Promise<string | undefined> => {
     try {
       await runCommand(
         spinner,
@@ -33,25 +33,20 @@ const DatabaseModule: IModule = {
 
       await copyDir(templateDir, targetDir);
 
-      console.log(chalk.cyan("\nNext steps:\n"));
-      console.log(
+      const finalSteps = [
         chalk.cyan(
           "1. Open your `.env` file and set the `DATABASE_URL` to your PostgreSQL connection string. For example:\n"
-        )
-      );
-      console.log(
+        ),
         chalk.bold(
           '   DATABASE_URL="postgresql://user:password@localhost:5432/mydb"\n'
-        )
-      );
-
-      console.log(
+        ),
         chalk.cyan(
           "2. After setting the DATABASE_URL, run the following commands:\n"
-        )
-      );
-      console.log(chalk.bold("   npx prisma migrate dev --name init"));
-      console.log(chalk.bold("   npx prisma generate\n"));
+        ),
+        chalk.bold("   npx prisma migrate dev --name init"),
+        chalk.bold("   npx prisma generate\n"),
+      ];
+      return finalSteps.join("\n");
     } catch (error) {
       spinner.fail(`Database setup failed: ${(error as Error).message}`);
       throw error;

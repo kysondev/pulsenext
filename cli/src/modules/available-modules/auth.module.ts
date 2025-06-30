@@ -16,12 +16,14 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const AuthModule: IModule = {
   name: "auth",
-  dependencies: ["database"],
-  initialize: async (spinner: Ora): Promise<void> => {
+  dependencies: ["database", "email"],
+  initialize: async (spinner: Ora): Promise<string | undefined> => {
     try {
       const prismaSchemaPath = path.join(targetDir, "prisma", "schema.prisma");
       if (fs.existsSync(prismaSchemaPath)) {
-        const answer = await askUser("\n⚠️  Warning: The auth module will modify your Prisma schema. Do you want to continue? (y/N) ")
+        const answer = await askUser(
+          "\n⚠️  Warning: The auth module will modify your Prisma schema. Do you want to continue? (y/N) "
+        );
 
         if (!answer) {
           spinner.fail("Auth module installation cancelled by user");
@@ -31,12 +33,10 @@ const AuthModule: IModule = {
 
       const shouldProceed = await askUser(
         "\nThe auth module will install the following packages:\n" +
-        "- better-auth\n" +
-        "- argon2\n" +
-        "- @react-email/components\n" +
-        "- react-hot-toast\n" +
-        "- resend\n\n" +
-        "Do you want to proceed? (y/N) "
+          "- better-auth\n" +
+          "- argon2\n" +
+          "- react-hot-toast\n" +
+          "Do you want to proceed? (y/N) "
       );
 
       if (!shouldProceed) {
@@ -46,7 +46,7 @@ const AuthModule: IModule = {
 
       await runCommand(
         spinner,
-        "npm i better-auth argon2 @react-email/components react-hot-toast resend",
+        "npm i better-auth argon2 react-hot-toast",
         "Installing auth packages..."
       );
 
@@ -64,7 +64,7 @@ const AuthModule: IModule = {
       const layoutPath = path.join(targetDir, "app", "layout.tsx");
       if (fs.existsSync(layoutPath)) {
         let layoutContent = fs.readFileSync(layoutPath, "utf-8");
-        
+
         if (!layoutContent.includes("import { Toaster }")) {
           layoutContent = layoutContent.replace(
             'import "./globals.css";',
@@ -74,7 +74,7 @@ const AuthModule: IModule = {
 
         if (!layoutContent.includes("<Toaster")) {
           layoutContent = layoutContent.replace(
-            '<body className={`antialiased`}>',
+            "<body className={`antialiased`}>",
             '<body className={`antialiased`}>\n        <div>\n          <Toaster\n            toastOptions={{ style: { background: "#232323", color: "#fff" } }}\n          />\n        </div>'
           );
         }
@@ -89,12 +89,6 @@ APP_NAME="Your App Name"
 NEXT_PUBLIC_APP_URL="http://localhost:3000"
 BETTER_AUTH_SECRET="your-secret-key-here"
 
-# Email Configuration
-TWO_FA_EMAIL="your-email@example.com"
-VERIFICATION_EMAIL="your-email@example.com"
-RESET_PASSWORD_EMAIL="your-email@example.com"
-RESEND_API_KEY="your-resend-api-key"
-
 # OAuth Providers (Optional)
 GITHUB_CLIENT_ID="your-github-client-id"
 GITHUB_CLIENT_SECRET="your-github-client-secret"
@@ -108,37 +102,24 @@ GOOGLE_CLIENT_SECRET="your-google-client-secret"
         fs.writeFileSync(envPath, envContent);
       }
 
-      console.log(chalk.cyan("\nNext steps:\n"));
-      console.log(
-        chalk.yellow(
-          "⚠️  Important: The following environment variables have been added to your .env file. Please edit them with your actual configuration:\n"
-        )
-      );
-      console.log(
+      const finalSteps = [
         chalk.bold(
-          '   # App Configuration\n' +
-          '   APP_NAME="Your App Name"\n' +
-          '   NEXT_PUBLIC_APP_URL="http://localhost:3000"\n' +
-          '   BETTER_AUTH_SECRET="your-secret-key-here"\n\n' +
-          '   # Email Configuration\n' +
-          '   TWO_FA_EMAIL="your-email@example.com"\n' +
-          '   VERIFICATION_EMAIL="your-email@example.com"\n' +
-          '   RESET_PASSWORD_EMAIL="your-email@example.com"\n' +
-          '   RESEND_API_KEY="your-resend-api-key"\n\n' +
-          '   # OAuth Providers (Optional)\n' +
-          '   GITHUB_CLIENT_ID="your-github-client-id"\n' +
-          '   GITHUB_CLIENT_SECRET="your-github-client-secret"\n' +
-          '   GOOGLE_CLIENT_ID="your-google-client-id"\n' +
-          '   GOOGLE_CLIENT_SECRET="your-google-client-secret"\n'
-        )
-      );
-
-      console.log(
+          "   # App Configuration\n" +
+            '   APP_NAME="Your App Name"\n' +
+            '   NEXT_PUBLIC_APP_URL="http://localhost:3000"\n' +
+            '   BETTER_AUTH_SECRET="your-secret-key-here"\n\n' +
+            "   # OAuth Providers (Optional)\n" +
+            '   GITHUB_CLIENT_ID="your-github-client-id"\n' +
+            '   GITHUB_CLIENT_SECRET="your-github-client-secret"\n' +
+            '   GOOGLE_CLIENT_ID="your-google-client-id"\n' +
+            '   GOOGLE_CLIENT_SECRET="your-google-client-secret"\n'
+        ),
         chalk.cyan(
           "\n2. After setting the environment variables, run the following command:\n"
-        )
-      );
-      console.log(chalk.bold("   npx prisma generate\n"));
+        ),
+        chalk.bold("   npx prisma generate\n"),
+      ];
+      return finalSteps.join("\n");
     } catch (error) {
       spinner.fail(`Auth setup failed: ${(error as Error).message}`);
       throw error;
@@ -154,7 +135,6 @@ GOOGLE_CLIENT_SECRET="your-google-client-secret"
         "lib/auth",
         "lib/validations",
         "components/auth",
-        "components/ui/emails",
       ];
 
       const filesToRemove = [
@@ -168,29 +148,19 @@ GOOGLE_CLIENT_SECRET="your-google-client-secret"
         "components/ui/loading.tsx",
         "actions/auth.action.ts",
         "public/github.svg",
-        "public/google.svg"
+        "public/google.svg",
       ];
 
-      const packagesToRemove = [
-        "better-auth",
-        "argon2",
-        "@react-email/components",
-        "react-hot-toast",
-        "resend"
-      ];
+      const packagesToRemove = ["better-auth", "argon2", "react-hot-toast"];
 
       const envKeysToRemove = [
         "APP_NAME",
         "NEXT_PUBLIC_APP_URL",
         "BETTER_AUTH_SECRET",
-        "TWO_FA_EMAIL",
-        "VERIFICATION_EMAIL",
-        "RESET_PASSWORD_EMAIL",
-        "RESEND_API_KEY",
         "GITHUB_CLIENT_ID",
         "GITHUB_CLIENT_SECRET",
         "GOOGLE_CLIENT_ID",
-        "GOOGLE_CLIENT_SECRET"
+        "GOOGLE_CLIENT_SECRET",
       ];
 
       await cleanupModuleResources({
@@ -198,20 +168,28 @@ GOOGLE_CLIENT_SECRET="your-google-client-secret"
         packages: packagesToRemove,
         filesToDelete: [...directoriesToRemove, ...filesToRemove],
         envFilePath: ".env",
-        envKeyToRemove: envKeysToRemove.join(",")
+        envKeyToRemove: envKeysToRemove.join(","),
       });
 
       const layoutPath = path.join(targetDir, "app", "layout.tsx");
       if (fs.existsSync(layoutPath)) {
         try {
           let layoutContent = fs.readFileSync(layoutPath, "utf-8");
-          layoutContent = layoutContent.replace(/import\s*{\s*Toaster\s*}\s*from\s*["']react-hot-toast["'];\n?/g, "");
-          layoutContent = layoutContent.replace(/<div>\s*<Toaster[^>]*\/>\s*<\/div>/g, "");
+          layoutContent = layoutContent.replace(
+            /import\s*{\s*Toaster\s*}\s*from\s*["']react-hot-toast["'];\n?/g,
+            ""
+          );
+          layoutContent = layoutContent.replace(
+            /<div>\s*<Toaster[^>]*\/>\s*<\/div>/g,
+            ""
+          );
           layoutContent = layoutContent.replace(/\n{3,}/g, "\n\n");
           fs.writeFileSync(layoutPath, layoutContent);
           spinner.succeed("Removed Toaster from layout");
         } catch (error) {
-          spinner.warn(`Failed to remove Toaster from layout: ${(error as Error).message}`);
+          spinner.warn(
+            `Failed to remove Toaster from layout: ${(error as Error).message}`
+          );
         }
       }
     } catch (error) {
