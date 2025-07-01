@@ -46,7 +46,7 @@ Once your project is created, you can add pre-configured modules to it by using 
 pulsenext add <module-name>
 ```
 
-Replace `<module-name>` with the name of the module you wish to add to your project. Some examples of modules include `auth`, `stripe`, `database`, etc. You can add as many modules as you need for your project.
+Replace `<module-name>` with the name of the module you wish to add to your project. Some examples of modules include `auth`, `payment`, `database`, etc. You can add as many modules as you need for your project.
 
 ---
 
@@ -76,7 +76,7 @@ Here’s a non-exhaustive list of the modules you can add to your projects:
 
 - **PostgreSQL + Prisma** (`database`)
 - **Authentication** (`auth`)
-- **Payment System** (`stripe`) _Coming soon_
+- **Payment System** (`payment`) _Coming soon_
 - More Coming Soon...
 
 If you're missing a specific module, feel free to add it and contribute!
