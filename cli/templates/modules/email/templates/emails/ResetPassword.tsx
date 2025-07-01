@@ -20,7 +20,9 @@ const ResetPassword = ({ url }: ResetPasswordProps) => {
   return (
     <Html>
       <Head />
-      <Preview>Reset your account password for Phizy-Stack</Preview>
+      <Preview>
+        Reset your account password for {process.env.APP_NAME || "App Name"}
+      </Preview>
       <Tailwind>
         <Body className="bg-gray-50 font-sans">
           <Container className="mx-auto py-8 px-4 max-w-[600px]">
@@ -31,8 +33,9 @@ const ResetPassword = ({ url }: ResetPasswordProps) => {
 
               <Text className="text-gray-700 text-lg mb-8 text-center">
                 You are receiving this email because you requested a password
-                reset for your Phizy-Stack account. If you didn't request a
-                password reset, you can safely ignore this email.
+                reset for your {process.env.APP_NAME || "App Name"} account. If
+                you didn't request a password reset, you can safely ignore this
+                email.
               </Text>
 
               <Section className="text-center mb-8">
@@ -57,7 +60,7 @@ const ResetPassword = ({ url }: ResetPasswordProps) => {
               <hr className="border-gray-200 mb-8" />
 
               <Text className="text-gray-500 text-xs text-center">
-                ©2025 Phizy-Stack
+                ©2025 {process.env.APP_NAME || "App Name"}
                 <br />
                 <br />
                 All rights reserved.

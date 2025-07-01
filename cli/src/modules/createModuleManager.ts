@@ -33,24 +33,24 @@ const createModuleManager = async () => {
     const finalStepsMessages: string[] = [];
     if (module) {
       const currentDir = process.cwd();
-      const phizyConfigPath = path.join(currentDir, ".phizy-stack.json");
-      if (!existsSync(phizyConfigPath)) {
-        spinner.fail("Not in a valid phizy-stack project directory");
+      const pulseConfigPath = path.join(currentDir, ".pulsenext.json");
+      if (!existsSync(pulseConfigPath)) {
+        spinner.fail("Not in a valid pulsenext project directory");
         log.error(
-          "This command must be run from within a project created by phizy-stack"
+          "This command must be run from within a project created by pulsenext"
         );
         log.info(
           `To create a new project, run: ${chalk.bold(
-            "phizy-stack create <project-name>"
+            "pulsenext create <project-name>"
           )}`
         );
         process.exit(1);
       }
-      const phizyConfig = JSON.parse(
-        await asyncFs.readFile(phizyConfigPath, "utf8")
+      const pulseConfig = JSON.parse(
+        await asyncFs.readFile(pulseConfigPath, "utf8")
       );
 
-      if (phizyConfig.modules.includes(moduleName)) {
+      if (pulseConfig.modules.includes(moduleName)) {
         spinner.fail(
           `Module "${chalk.bold(
             moduleName
@@ -64,7 +64,7 @@ const createModuleManager = async () => {
           spinner.stop();
 
           const newDependencies = module.dependencies.filter(
-            (dependency) => !phizyConfig.modules.includes(dependency)
+            (dependency) => !pulseConfig.modules.includes(dependency)
           );
 
           if (newDependencies.length > 0) {
@@ -92,12 +92,13 @@ const createModuleManager = async () => {
               const dependencyModule = modules[dependency];
               if (dependencyModule) {
                 try {
-                  const depFinalSteps = await dependencyModule.initialize(spinner);
+                  const depFinalSteps =
+                    await dependencyModule.initialize(spinner);
                   if (depFinalSteps) finalStepsMessages.push(depFinalSteps);
-                  phizyConfig.modules.push(dependency);
+                  pulseConfig.modules.push(dependency);
                   await asyncFs.writeFile(
-                    phizyConfigPath,
-                    JSON.stringify(phizyConfig, null, 2)
+                    pulseConfigPath,
+                    JSON.stringify(pulseConfig, null, 2)
                   );
                   spinner.succeed(
                     `Dependency "${chalk.bold(dependency)}" added successfully.`
@@ -119,20 +120,22 @@ const createModuleManager = async () => {
 
         const mainFinalSteps = await module.initialize(spinner);
         if (mainFinalSteps) finalStepsMessages.push(mainFinalSteps);
-        phizyConfig.modules.push(moduleName);
+        pulseConfig.modules.push(moduleName);
         await asyncFs.writeFile(
-          phizyConfigPath,
-          JSON.stringify(phizyConfig, null, 2)
+          pulseConfigPath,
+          JSON.stringify(pulseConfig, null, 2)
         );
         spinner.succeed(
           `Module "${chalk.bold(moduleName)}" added successfully.`
         );
         if (finalStepsMessages.length > 0) {
-          console.log("\n====================\nNext steps:\n====================\n");
+          console.log(
+            "\n====================\nNext steps:\n====================\n"
+          );
           const moduleOrder = [];
           if (module.dependencies && module.dependencies.length > 0) {
-            module.dependencies.forEach(dep => {
-              if (phizyConfig.modules.includes(dep)) moduleOrder.push(dep);
+            module.dependencies.forEach((dep) => {
+              if (pulseConfig.modules.includes(dep)) moduleOrder.push(dep);
             });
           }
           moduleOrder.push(moduleName);
@@ -170,24 +173,24 @@ const createModuleManager = async () => {
     const module = modules[moduleName];
     if (module) {
       const currentDir = process.cwd();
-      const phizyConfigPath = path.join(currentDir, ".phizy-stack.json");
-      if (!existsSync(phizyConfigPath)) {
-        spinner.fail("Not in a valid phizy-stack project directory");
+      const pulseConfigPath = path.join(currentDir, ".pulsenext.json");
+      if (!existsSync(pulseConfigPath)) {
+        spinner.fail("Not in a valid pulsenext project directory");
         log.error(
-          "This command must be run from within a project created by phizy-stack"
+          "This command must be run from within a project created by pulsenext"
         );
         log.info(
           `To create a new project, run: ${chalk.bold(
-            "phizy-stack create <project-name>"
+            "pulsenext create <project-name>"
           )}`
         );
         process.exit(1);
       }
-      const phizyConfig = JSON.parse(
-        await asyncFs.readFile(phizyConfigPath, "utf8")
+      const pulseConfig = JSON.parse(
+        await asyncFs.readFile(pulseConfigPath, "utf8")
       );
 
-      if (!phizyConfig.modules.includes(moduleName)) {
+      if (!pulseConfig.modules.includes(moduleName)) {
         spinner.fail(
           `Module "${chalk.bold(moduleName)}" is not installed in this project`
         );
@@ -195,7 +198,7 @@ const createModuleManager = async () => {
       }
 
       try {
-        const dependentModules = phizyConfig.modules.filter(
+        const dependentModules = pulseConfig.modules.filter(
           (installedModule: string) => {
             if (installedModule === moduleName) return false;
             const installedModuleConfig = modules[installedModule];
@@ -228,12 +231,12 @@ const createModuleManager = async () => {
 
           for (const depModule of modulesToRemove) {
             await remove(depModule, spinner, true);
-            phizyConfig.modules = phizyConfig.modules.filter(
+            pulseConfig.modules = pulseConfig.modules.filter(
               (module: string) => module !== depModule
             );
             await asyncFs.writeFile(
-              phizyConfigPath,
-              JSON.stringify(phizyConfig, null, 2)
+              pulseConfigPath,
+              JSON.stringify(pulseConfig, null, 2)
             );
           }
         }
@@ -244,7 +247,7 @@ const createModuleManager = async () => {
           !isDependency
         ) {
           const installedDependencies = module.dependencies.filter((dep) =>
-            phizyConfig.modules.includes(dep)
+            pulseConfig.modules.includes(dep)
           );
 
           if (installedDependencies.length > 0) {
@@ -272,24 +275,24 @@ const createModuleManager = async () => {
 
             for (const dep of depsToRemove) {
               await remove(dep, spinner, true);
-              phizyConfig.modules = phizyConfig.modules.filter(
+              pulseConfig.modules = pulseConfig.modules.filter(
                 (module: string) => module !== dep
               );
               await asyncFs.writeFile(
-                phizyConfigPath,
-                JSON.stringify(phizyConfig, null, 2)
+                pulseConfigPath,
+                JSON.stringify(pulseConfig, null, 2)
               );
             }
           }
         }
 
         await module.remove(spinner);
-        phizyConfig.modules = phizyConfig.modules.filter(
+        pulseConfig.modules = pulseConfig.modules.filter(
           (module: string) => module !== moduleName
         );
         await asyncFs.writeFile(
-          phizyConfigPath,
-          JSON.stringify(phizyConfig, null, 2)
+          pulseConfigPath,
+          JSON.stringify(pulseConfig, null, 2)
         );
         spinner.succeed(
           `Module ${chalk.bold(moduleName)} removed successfully.`

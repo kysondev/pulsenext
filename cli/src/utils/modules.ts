@@ -109,7 +109,7 @@ export const cleanupModuleResources = async ({
 
   const checkAndRemoveEmptyParentDir = async (dir: string) => {
     if (dir === "." || dir === "public") return;
-    
+
     try {
       const dirContents = fs.readdirSync(dir);
       if (dirContents.length === 0) {
@@ -148,7 +148,7 @@ export const cleanupModuleResources = async ({
       .split("\n")
       .filter((line) => {
         if (!line.trim() || line.trim().startsWith("#")) return true;
-        return !keysToRemove.some(key => line.trim().startsWith(`${key}=`));
+        return !keysToRemove.some((key) => line.trim().startsWith(`${key}=`));
       });
     fs.writeFileSync(envFilePath, lines.join("\n") + "\n");
   }
@@ -171,7 +171,7 @@ export const installDependencies = async (
       for (const dependency of dependencies) {
         await runCommand(
           spinner,
-          `phizy-stack add ${dependency}`,
+          `pulsenext add ${dependency}`,
           "Installing dependencies..."
         );
       }

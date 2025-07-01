@@ -11,7 +11,7 @@ import fs from "fs/promises";
 export default async function create(projectName: string) {
   const execAsync = promisify(exec);
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
-  const spinner = ora("Creating new Phizy Stack project...").start();
+  const spinner = ora("Creating new PulseNext project...").start();
   try {
     const baseTemplateDir = path.join(__dirname, "../../templates/base");
     const projectDir = path.resolve(projectName);
@@ -23,15 +23,15 @@ export default async function create(projectName: string) {
 
     await copyDir(baseTemplateDir, projectDir);
 
-    const phizyConfigPath = path.join(projectDir, '.phizy-stack.json');
+    const pulseConfigPath = path.join(projectDir, ".pulsenext.json");
     const version = await getVersion();
-    const phizyConfig = {
+    const pulseConfig = {
       projectName,
       version: version,
       createdAt: new Date().toISOString(),
-      modules: []
+      modules: [],
     };
-    await fs.writeFile(phizyConfigPath, JSON.stringify(phizyConfig, null, 2));
+    await fs.writeFile(pulseConfigPath, JSON.stringify(pulseConfig, null, 2));
 
     const packageJsonPath = path.join(projectDir, "package.json");
     const packageJson = JSON.parse(await fs.readFile(packageJsonPath, "utf8"));

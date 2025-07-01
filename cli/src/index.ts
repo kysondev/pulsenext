@@ -8,9 +8,9 @@ import remove from "./commands/remove.js";
 const program = new Command();
 
 program
-  .name("phizy-stack")
-  .description("CLI to create and extend projects with the Phizy stack")
-  .version("1.0.0");
+  .name("pulsenext")
+  .description("CLI to create and extend projects with the PulseNext")
+  .version("0.1.0");
 
 program
   .command("create")

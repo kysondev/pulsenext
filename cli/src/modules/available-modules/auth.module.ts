@@ -143,7 +143,7 @@ GOOGLE_CLIENT_SECRET="your-google-client-secret"
         "lib/auth.ts",
         "lib/auth-client.ts",
         "lib/resend.ts",
-        "lib/routes.ts",
+        "config/routes.ts",
         "services/user.service.ts",
         "components/ui/loading.tsx",
         "actions/auth.action.ts",

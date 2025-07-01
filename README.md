@@ -1,27 +1,27 @@
-# Phizy-Stack CLI
+# PulseNext
 
-Phizy-Stack is a command-line interface (CLI) tool designed to simplify the process of setting up full-stack Next.js projects with custom templates and prewritten modules. It allows you to quickly bootstrap new projects and integrate essential, pre-configured features like authentication, payment systems, databases, and many other modules, all ready to use.  
+PulseNext is a command-line interface (CLI) tool designed to simplify the process of setting up full-stack Next.js projects with custom templates and prewritten modules. It allows you to quickly bootstrap new projects and integrate essential, pre-configured features like authentication, payment systems, databases, and many other modules, all ready to use.  
 This tool was originally created for personal use, but I'm sharing it here for others who may find it useful.
 
 ---
 
 ## Features
 
-- **Create a new Next.js project**: Generate a new project using `phizy-stack` custom template in seconds.
+- **Create a new Next.js project**: Generate a new project using `pulsenext` custom template in seconds.
 - **Add prewritten modules**: Easily integrate a wide range of pre-configured modules to your project, such as authentication, payment systems, databases (PostgreSQL + Prisma), API integrations, and more.
 
 ---
 
 ## Installation
 
-To get started with `phizy-stack`, you need to have **Node.js** installed on your machine. You can install it from [here](https://nodejs.org/).
+To get started with `pulsenext`, you need to have **Node.js** installed on your machine. You can install it from [here](https://nodejs.org/).
 
-### Install Phizy-Stack CLI globally
+### Install PulseNext globally
 
-To install `phizy-stack` globally on your system, run:
+To install `pulsenext` globally on your system, run:
 
 ```
-npm install -g phizy-stack
+npm install -g pulsenext
 ```
 
 ---
@@ -30,10 +30,10 @@ npm install -g phizy-stack
 
 ### 1. Create a New Project
 
-To create a new full-stack Next.js project with `phizy-stack`, run:
+To create a new full-stack Next.js project with `pulsenext`, run:
 
 ```
-phizy-stack create <project-name>
+pulsenext create <project-name>
 ```
 
 This will generate a new Next.js project using a predefined template. Replace `<project-name>` with the name you want for your new project.
@@ -43,7 +43,7 @@ This will generate a new Next.js project using a predefined template. Replace `<
 Once your project is created, you can add pre-configured modules to it by using the following syntax:
 
 ```
-phizy-stack add <module-name>
+pulsenext add <module-name>
 ```
 
 Replace `<module-name>` with the name of the module you wish to add to your project. Some examples of modules include `auth`, `stripe`, `database`, etc. You can add as many modules as you need for your project.
@@ -52,10 +52,10 @@ Replace `<module-name>` with the name of the module you wish to add to your proj
 
 ## Example Workflow
 
-1. Create a new project using `phizy-stack`:
+1. Create a new project using `pulsenext`:
 
    ```
-   phizy-stack create my-nextjs-app
+   pulsenext create my-nextjs-app
    ```
 
 2. Navigate to your project directory:
@@ -67,7 +67,7 @@ Replace `<module-name>` with the name of the module you wish to add to your proj
 3. Add authentication:
 
    ```
-   phizy-stack add auth
+   pulsenext add auth
    ```
 
 ## Available Modules
@@ -91,15 +91,16 @@ This project was originally created for personal use, but feel free to fork the 
 
 ## License
 
-Phizy-Stack is open-source and available under the [MIT License](LICENSE).
+PulseNext is open-source and available under the [MIT License](LICENSE).
 
 ---
 
 ## Roadmap
 
-- [x] Add database modules
-- [x] Add phizy-stack remove module command
-- [x] Add auth modules
-- [ ] Add turborepo & docs page
+- [x] Add database module
+- [x] Add pulsenext remove module command
+- [x] Add auth module
+- [x] Add turborepo & docs page
+- [x] Add email module
 - [ ] Add payment modules
 - More coming soon!

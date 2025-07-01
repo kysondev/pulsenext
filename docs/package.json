@@ -1,24 +1,23 @@
 {
-  "name": "@phizy-stack/docs",
+  "name": "@pulsenext/docs",
   "version": "0.1.0",
   "type": "module",
   "description": "A CLI tool for quickly creating full-stack Next.js projects with custom templates and prewritten modules.",
   "keywords": [
     "cli",
     "typescript",
-    "phizy",
     "stack",
     "full-stack"
   ],
-  "author": "phizyts",
+  "author": "kysondev",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/phizyts/phizy-stack.git"
+    "url": "git+https://github.com/kysondev/pulsenext.git"
   },
   "bugs": {
-    "url": "https://github.com/phizyts/phizy-stack/issues"
+    "url": "https://github.com/kysondev/pulsenext/issues"
   },
-  "homepage": "https://github.com/phizyts/phizy-stack#readme",
+  "homepage": "https://github.com/kysondev/pulsenext#readme",
   "scripts": {
     "build": "next build",
     "dev": "next dev --turbo",

@@ -4,13 +4,8 @@ export const baseOptions: BaseLayoutProps = {
   nav: {
     title: (
       <>
-        <Image
-          src="/phizy-stack.svg"
-          alt="Phizy Stack"
-          width={15}
-          height={15}
-        />
-        Phizy Stack
+        <Image src="/pulsecli.svg" alt="PulseNext" width={15} height={15} />
+        PulseNext
       </>
     ),
   },

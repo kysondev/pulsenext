@@ -1,6 +1,6 @@
 {
-  "title": "Phizy Stack",
-  "description": "Phizy Stack",
+  "title": "PulseNext",
+  "description": "PulseNext is a CLI tool for creating and managing Next.js projects with pre-configured modules.",
   "root": true,
   "pages": ["---Get Started---", "index", "quick-start", "modules"]
 }

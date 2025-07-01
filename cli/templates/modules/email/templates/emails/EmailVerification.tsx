@@ -20,7 +20,9 @@ const EmailVerification = ({ url }: EmailVerificationProps) => {
   return (
     <Html>
       <Head />
-      <Preview>Verify your email address for Phizy-Stack</Preview>
+      <Preview>
+        Verify your email address for {process.env.APP_NAME || "App Name"}
+      </Preview>
       <Tailwind>
         <Body className="bg-gray-50 font-sans">
           <Container className="mx-auto py-8 px-4 max-w-[600px]">
@@ -56,7 +58,7 @@ const EmailVerification = ({ url }: EmailVerificationProps) => {
               <hr className="border-gray-200 mb-8" />
 
               <Text className="text-gray-500 text-xs text-center">
-                ©2025 Phizy-Stack
+                ©2025 {process.env.APP_NAME || "App Name"}
                 <br />
                 <br />
                 All rights reserved.
