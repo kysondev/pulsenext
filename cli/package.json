@@ -1,6 +1,6 @@
 {
   "name": "pulsenext",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A CLI tool for quickly creating full-stack Next.js projects with custom templates and prewritten modules.",
   "bin": {
     "pulsenext": "./build/index.js"
